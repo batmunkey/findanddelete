@@ -5,21 +5,25 @@ __author__ ='Sam Powell'
 __date__ ='10/03/17'
 __email__='batmunkey@hotmail.com'
 
+
 import os
 import time
 import logging
 import subprocess
 from os.path import join
 
+
 ONEWEEK = "changeme1week"
 ONEMONTH = "changeme1month"
 THREEMONTH "changeme3month"
 LOGPATH = "/var/log/findanddelete.py"
 
+
 # Create the logging file if it doesn't exist
 if not os.path.exists('/var/log/findanddelete.log'):
     open('/var/log/findanddelete.log', 'w').close()
 
+    
 # Build a logger
 def instantiateLogger():
     global logger
@@ -31,6 +35,7 @@ def instantiateLogger():
     logger.setLevel(logging.INFO)
     logger.info('Set a cron notification here')
 
+    
 # Add python system statistics to log file
 def pythonSystemStats():
     versionpy = subprocess.check_output("python --version", stderr=subprocess.STDOUT, shell=True)
@@ -40,6 +45,7 @@ def pythonSystemStats():
     logger.info("Here is the path to your python " + whichpy.rstrip("\n"))
     logger.info("This is your pythons openssl version " + osslpy.rstrip("\n"))
 
+    
 def setvars():
     global weekPath
     global monthPath
@@ -49,6 +55,7 @@ def setvars():
     monthPath = str(ONEMONTH)
     threeMonthPath = str(THREEMONTH)
     now = time.time()
+    
     
 # Remove files older than one week
 def weekremove(dir):
@@ -61,6 +68,7 @@ def weekremove(dir):
             elif os.path.isdir(fullpath):
                 weekremove(fullpath)
 
+                
 # Remove files older than one month
 def monthremove(dir):
     for f in os.listdir(dir):
@@ -72,6 +80,7 @@ def monthremove(dir):
             elif os.path.isdir(fullpath):
                 monthremove(fullpath)
 
+                
 # Remove files older than three months
 def threemonthremove(dir):
     for f in os.listdir(dir):
@@ -83,7 +92,8 @@ def threemonthremove(dir):
             elif os.path.isdir(fullpath):
                 threemonthremove(fullpath)
 
-#### Now we need to remove empty directories
+
+# Now we need to remove empty directories
 def remEmptyDir(path, recursive=True):
     for root, dirs, files in os.walk(path,topdown=True):
         for name in dirs:
@@ -93,7 +103,7 @@ def remEmptyDir(path, recursive=True):
                     logger.warn('This directory was deleted because it was empty=%s', dirname)
                     os.removedirs(dirname)
                     
-### Layout the logic
+
 def main():
     instantiateLogger()
     pythonSystemStats()
@@ -107,6 +117,6 @@ def main():
     # Log each time the cron job finishes successfully
     logger.info('The hourly cron job was finished successfully')
 
-# Run Everything
+
 if __name__ == '__main__':
     main() 
